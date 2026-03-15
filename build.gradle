@@ -1,0 +1,92 @@
+plugins {
+    id "fabric-loom" version "1.11-SNAPSHOT"
+}
+
+loom {
+    mixin {
+        defaultRefmapName = "kohs_offhand_whitelist-refmap.json"
+    }
+}
+
+group = project.findProperty("maven_group") ?: "dev.zymekoh.kohs"
+version = project.findProperty("mod_version") ?: "1.0.0"
+
+base {
+    archivesName = project.findProperty("archives_base_name") ?: "kohs-offhand-whitelist"
+}
+
+repositories {
+    maven { url = "https://maven.fabricmc.net/" }
+    maven { url = "https://maven.terraformersmc.com/releases/" }
+    mavenCentral()
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    modCompileOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
+}
+
+processResources {
+    inputs.property "version", project.version
+    filesMatching("fabric.mod.json") {
+        expand "version": project.version
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.release = 21
+    options.encoding = "UTF-8"
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+    withSourcesJar()
+}
+
+tasks.register("purgeOldLibs") {
+    group = "build"
+    description = "Deletes old-version jars from build/libs and build/devlibs, keeping only current project.version artifacts."
+    doLast {
+        String archiveName = base.archivesName.get()
+        Set<String> artifactPrefixes = [
+                "${archiveName}-",
+                "${archiveName.replace('-', '_')}-"
+        ] as Set
+        String escapedVersion = java.util.regex.Pattern.quote(project.version.toString())
+        def currentVersionPattern = ~/^.+-${escapedVersion}(-.*)?\.jar$/
+        List<File> artifactDirs = [
+                layout.buildDirectory.dir("libs").get().asFile,
+                layout.buildDirectory.dir("devlibs").get().asFile
+        ]
+
+        artifactDirs.each { File dir ->
+            if (!dir.exists()) {
+                return
+            }
+            dir.listFiles()?.findAll { File file ->
+                file.isFile()
+                        && file.name.endsWith(".jar")
+                        && artifactPrefixes.any { prefix -> file.name.startsWith(prefix) }
+                        && !(file.name ==~ currentVersionPattern)
+            }?.each { File oldJar ->
+                if (oldJar.delete()) {
+                    logger.lifecycle("Deleted old lib artifact: ${oldJar.absolutePath}")
+                } else {
+                    logger.warn("Could not delete old lib artifact: ${oldJar.absolutePath}")
+                }
+            }
+        }
+    }
+}
+
+tasks.named("compileJava") {
+    finalizedBy(tasks.named("purgeOldLibs"))
+}
+
+tasks.matching { it.name in ["jar", "remapJar", "sourcesJar", "remapSourcesJar", "build"] }.configureEach {
+    dependsOn(tasks.named("purgeOldLibs"))
+}
