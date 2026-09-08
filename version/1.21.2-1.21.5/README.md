@@ -1,24 +1,24 @@
-# Estado de compatibilidad - Minecraft 1.21.2 a 1.21.5
+# Compatibility status - Minecraft 1.21.2 to 1.21.5
 
-## Informacion general
+## General information
 - Mod: KoHs Offhand Whitelist
-- Carpeta unificada: version/1.21.2-1.21.5
-- Soporte objetivo: 1.21.2, 1.21.3, 1.21.4, 1.21.5
-- Clientes locales: KoHstest-1.21.2, KoHstest-1.21.3, KoHstest-1.21.4, KoHstest-1.21.5
-- Origen: fusion de carpetas individuales 1.21.2 a 1.21.5
-- Fecha de creacion/sincronizacion: 2026-03-16
+- Unified directory: version/1.21.2-1.21.5
+- Target support: 1.21.2, 1.21.3, 1.21.4, 1.21.5
+- Local clients: KoHstest-1.21.2, KoHstest-1.21.3, KoHstest-1.21.4, KoHstest-1.21.5
+- Origin: merge of the individual 1.21.2 to 1.21.5 directories
+- Created/synchronised: 2026-03-16
 
-## Estado por version
-- 1.21.2: Compila y cliente ejecutado (logs en logs/1.21.2)
-- 1.21.3: Compila y cliente ejecutado (logs en logs/1.21.3)
-- 1.21.4: Compila y cliente ejecutado (logs en logs/1.21.4)
-- 1.21.5: Compila y cliente ejecutado (logs en logs/1.21.5)
+## Status per version
+- 1.21.2: builds, client run (logs in logs/1.21.2)
+- 1.21.3: builds, client run (logs in logs/1.21.3)
+- 1.21.4: builds, client run (logs in logs/1.21.4)
+- 1.21.5: builds, client run (logs in logs/1.21.5)
 
-## Uso rapido
-- Compilar 1.21.2: `./gradlew.bat remapJar configureClientLaunch downloadAssets "-Ptarget_mc=1.21.2" --no-daemon`
-- Compilar 1.21.3: `./gradlew.bat remapJar configureClientLaunch downloadAssets "-Ptarget_mc=1.21.3" --no-daemon`
-- Compilar 1.21.4: `./gradlew.bat remapJar configureClientLaunch downloadAssets "-Ptarget_mc=1.21.4" --no-daemon`
-- Compilar 1.21.5: `./gradlew.bat remapJar configureClientLaunch downloadAssets "-Ptarget_mc=1.21.5" --no-daemon`
+## Quick use
+- Build 1.21.2: `./gradlew.bat remapJar configureClientLaunch downloadAssets "-Ptarget_mc=1.21.2" --no-daemon`
+- Build 1.21.3: `./gradlew.bat remapJar configureClientLaunch downloadAssets "-Ptarget_mc=1.21.3" --no-daemon`
+- Build 1.21.4: `./gradlew.bat remapJar configureClientLaunch downloadAssets "-Ptarget_mc=1.21.4" --no-daemon`
+- Build 1.21.5: `./gradlew.bat remapJar configureClientLaunch downloadAssets "-Ptarget_mc=1.21.5" --no-daemon`
 
-## Artefacto unificado esperado
+## Expected unified artifact
 - `kohs-offhand-whitelist-1.21.2 - 1.21.5-1.0.2.jar`
