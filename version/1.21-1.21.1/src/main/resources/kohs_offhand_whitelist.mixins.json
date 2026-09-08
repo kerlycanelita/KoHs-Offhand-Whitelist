@@ -1,0 +1,17 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "dev.zymekoh.kohsoffhandwhitelist.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "refmap": "kohs_offhand_whitelist-refmap.json",
+  "mixins": [],
+  "client": [
+    "ClientPlayerInteractionManagerMixin",
+    "MinecraftClientSwapHandsMixin",
+    "ShieldStatusCompatibilityMixin",
+    "SlotOffhandInsertMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>KoHs Mod Issue Reports</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Grotesk:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="bg-orb orb-a"></div>
+    <div class="bg-orb orb-b"></div>
+    <main class="shell">
+      <section class="panel intro reveal-up">
+        <p class="chip">KoHs Offhand Whitelist</p>
+        <h1>Issue Reporter</h1>
+        <p class="subtitle">
+          Submit bug reports, compatibility issues, or UI feedback. Reports are stored per source IP with optional
+          screenshots.
+        </p>
+      </section>
+
+      <section class="panel reveal-up delay-1">
+        <form id="issueForm" class="form" enctype="multipart/form-data">
+          <div class="tabs" role="tablist" aria-label="Issue tabs">
+            <button type="button" class="tab-btn active" data-tab="0">1. Category</button>
+            <button type="button" class="tab-btn" data-tab="1">2. Problem</button>
+            <button type="button" class="tab-btn" data-tab="2">3. Contact</button>
+            <button type="button" class="tab-btn" data-tab="3">4. Images</button>
+          </div>
+
+          <section class="tab-panel active" data-panel="0">
+            <label for="issueType">Problem Category</label>
+            <select id="issueType" name="issueType" required>
+              <option value="">Select one</option>
+              <option value="Crash">Crash</option>
+              <option value="Gameplay bug">Gameplay bug</option>
+              <option value="UI/UX bug">UI/UX bug</option>
+              <option value="Version compatibility">Version compatibility</option>
+              <option value="Performance issue">Performance issue</option>
+              <option value="Suggestion">Suggestion</option>
+              <option value="Other">Other</option>
+            </select>
+            <div class="tab-actions">
+              <button type="button" class="mini-btn next-btn" data-next="1">Next</button>
+            </div>
+          </section>
+
+          <section class="tab-panel" data-panel="1">
+            <label for="description">Problem Description</label>
+            <textarea
+              id="description"
+              name="description"
+              rows="8"
+              maxlength="5000"
+              required
+              placeholder="Describe the problem clearly..."
+            ></textarea>
+            <div class="tab-actions">
+              <button type="button" class="mini-btn prev-btn" data-prev="0">Back</button>
+              <button type="button" class="mini-btn next-btn" data-next="2">Next</button>
+            </div>
+          </section>
+
+          <section class="tab-panel" data-panel="2">
+            <label for="contact">Contact (optional)</label>
+            <input id="contact" name="contact" type="text" maxlength="120" placeholder="Discord, email, etc." />
+            <div class="tab-actions">
+              <button type="button" class="mini-btn prev-btn" data-prev="1">Back</button>
+              <button type="button" class="mini-btn next-btn" data-next="3">Next</button>
+            </div>
+          </section>
+
+          <section class="tab-panel" data-panel="3">
+            <label for="images">Images (optional, up to 6)</label>
+            <input id="images" name="images" type="file" accept="image/*" multiple />
+            <div id="imagesPreview" class="images-preview" aria-live="polite"></div>
+            <div class="tab-actions">
+              <button type="button" class="mini-btn prev-btn" data-prev="2">Back</button>
+            </div>
+          </section>
+
+          <button id="submitBtn" type="submit" class="submit">Submit Issue</button>
+          <p id="status" class="status" aria-live="polite"></p>
+        </form>
+      </section>
+    </main>
+    <script src="./app.js"></script>
+  </body>
+</html>

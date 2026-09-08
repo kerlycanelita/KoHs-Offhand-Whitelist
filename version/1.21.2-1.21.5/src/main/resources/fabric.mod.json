@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "id": "kohs_offhand_whitelist",
+  "version": "${version}",
+  "name": "KoHs Offhand Whitelist",
+  "description": "Configurable offhand whitelist with searchable item list and PvP presets.",
+  "authors": [
+    "zymekoh"
+  ],
+  "contact": {},
+  "license": "All-Rights-Reserved",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "dev.zymekoh.kohsoffhandwhitelist.KoHsOffhandWhitelist"
+    ],
+    "modmenu": [
+      "dev.zymekoh.kohsoffhandwhitelist.KoHsOffhandWhitelistModMenuIntegration"
+    ]
+  },
+  "icon": "assets/kohs_offhand_whitelist/icon.png",
+  "mixins": [
+    "kohs_offhand_whitelist.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.17.0",
+    "minecraft": "${minecraft_version_range}",
+    "java": ">=21",
+    "fabric-api": "*"
+  },
+  "suggests": {
+    "modmenu": "*"
+  }
+}
+

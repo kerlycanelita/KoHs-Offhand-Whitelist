@@ -1,0 +1,124 @@
+plugins {
+    id "fabric-loom" version "1.11-SNAPSHOT"
+}
+
+def targetMc = (project.findProperty("target_mc") ?: project.findProperty("minecraft_version") ?: "1.21.5").toString()
+def versionProfiles = [
+        "1.21.2": [yarn: "1.21.2+build.1", fabricApi: "0.106.1+1.21.2", modmenu: "12.0.0"],
+        "1.21.3": [yarn: "1.21.3+build.2", fabricApi: "0.114.1+1.21.3", modmenu: "12.0.0"],
+        "1.21.4": [yarn: "1.21.4+build.8", fabricApi: "0.119.4+1.21.4", modmenu: "13.0.3"],
+        "1.21.5": [yarn: "1.21.5+build.1", fabricApi: "0.128.2+1.21.5", modmenu: "14.0.1"]
+]
+
+if (!versionProfiles.containsKey(targetMc)) {
+    throw new GradleException("Unsupported target_mc '${targetMc}'. Supported values: ${versionProfiles.keySet().join(', ')}")
+}
+
+def selectedProfile = versionProfiles[targetMc]
+def targetYarn = selectedProfile.yarn
+def targetFabricApi = selectedProfile.fabricApi
+def targetModmenu = selectedProfile.modmenu
+def buildNameLabel = (project.findProperty("build_name_label") ?: "1.21.2 - 1.21.5").toString()
+def minecraftVersionRange = (project.findProperty("minecraft_version_range") ?: ">=1.21.2 <=1.21.5").toString()
+
+loom {
+    mixin {
+        defaultRefmapName = "kohs_offhand_whitelist-refmap.json"
+    }
+    runs {
+        client {
+            runDir "KoHstest-${targetMc}"
+            programArg "--username"
+            programArg "zymecocoa"
+        }
+    }
+}
+
+group = project.findProperty("maven_group") ?: "dev.zymekoh.kohs"
+version = project.findProperty("mod_version") ?: "1.0.0"
+
+base {
+    def baseName = (project.findProperty("archives_base_name") ?: "kohs-offhand-whitelist").toString()
+    archivesName = "${baseName}-${buildNameLabel}"
+}
+
+repositories {
+    maven { url = "https://maven.fabricmc.net/" }
+    maven { url = "https://maven.terraformersmc.com/releases/" }
+    mavenCentral()
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${targetMc}"
+    mappings "net.fabricmc:yarn:${targetYarn}:v2"
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${targetFabricApi}"
+    modCompileOnly "com.terraformersmc:modmenu:${targetModmenu}"
+    modLocalRuntime "com.terraformersmc:modmenu:${targetModmenu}"
+}
+
+processResources {
+    inputs.property "version", project.version
+    inputs.property "minecraft_version", targetMc
+    inputs.property "minecraft_version_range", minecraftVersionRange
+    filesMatching("fabric.mod.json") {
+        expand "version": project.version,
+                "minecraft_version": targetMc,
+                "minecraft_version_range": minecraftVersionRange
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.release = 21
+    options.encoding = "UTF-8"
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+    withSourcesJar()
+}
+
+tasks.register("purgeOldLibs") {
+    group = "build"
+    description = "Deletes old-version jars from build/libs and build/devlibs, keeping only current project.version artifacts."
+    doLast {
+        String archiveName = base.archivesName.get()
+        Set<String> artifactPrefixes = [
+                "${archiveName}-",
+                "${archiveName.replace('-', '_')}-"
+        ] as Set
+        String escapedVersion = java.util.regex.Pattern.quote(project.version.toString())
+        def currentVersionPattern = ~/^.+-${escapedVersion}(-.*)?\\.jar$/
+        List<File> artifactDirs = [
+                layout.buildDirectory.dir("libs").get().asFile,
+                layout.buildDirectory.dir("devlibs").get().asFile
+        ]
+
+        artifactDirs.each { File dir ->
+            if (!dir.exists()) {
+                return
+            }
+            dir.listFiles()?.findAll { File file ->
+                file.isFile()
+                        && file.name.endsWith(".jar")
+                        && artifactPrefixes.any { prefix -> file.name.startsWith(prefix) }
+                        && !(file.name ==~ currentVersionPattern)
+            }?.each { File oldJar ->
+                if (oldJar.delete()) {
+                    logger.lifecycle("Deleted old lib artifact: ${oldJar.absolutePath}")
+                } else {
+                    logger.warn("Could not delete old lib artifact: ${oldJar.absolutePath}")
+                }
+            }
+        }
+    }
+}
+
+tasks.named("compileJava") {
+    finalizedBy(tasks.named("purgeOldLibs"))
+}
+
+tasks.matching { it.name in ["jar", "remapJar", "sourcesJar", "remapSourcesJar", "build"] }.configureEach {
+    dependsOn(tasks.named("purgeOldLibs"))
+}

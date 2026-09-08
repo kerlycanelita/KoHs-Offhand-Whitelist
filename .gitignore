@@ -1,5 +1,55 @@
+# Gradle
 .gradle/
 build/
-out/
+!gradle/wrapper/gradle-wrapper.jar
+!gradle/wrapper/gradle-wrapper.properties
+
+# Ejecucion y depuracion
 run/
+runs/
+logs/
+bin/
+tmp/
+*.log
+*.err.log
+*.out.log
+hs_err_pid*
+replay_pid*
+
+# IDE
+.idea/
+.vscode/
 *.iml
+*.ipr
+*.iws
+.settings/
+.classpath
+.project
+
+# Herramientas de asistencia
+.claude/
+.cursor/
+.codex*/
+.openai/
+.vinext/
+.windsurf/
+.aider*
+CLAUDE.md
+AGENTS.md
+GEMINI.md
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# Instancias locales de Minecraft usadas para probar cada version
+version/*/KoHstest-*/
+version/*/build/
+version/*/.gradle/
+
+# Pagina de issues (servicio local)
+page issues/node_modules/
+page issues/reports/
+
+# Volcados de trabajo
+screen_javap.txt
